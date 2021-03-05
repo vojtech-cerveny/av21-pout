@@ -31,7 +31,7 @@ const Header = styled.div`
 `
 const AddRouteHeader = styled.span`
   padding-left: 15px;
-  //font-size: 20px;
+  font-size: 20px;
 `
 export const AddRoute = () => {
   const [isOpen, setIsOpen] = useState(true)
@@ -42,14 +42,15 @@ export const AddRoute = () => {
 
   return (
     <div style={boxStyle}>
-      <Header onClick={() => toggleVisibility()}>
+      <Header>
         <Button
           type="primary"
-          style={{ width: '100%' }}
+          style={{ width: '32px', height: '32px' }}
+          shape="circle"
           icon={isOpen ? <UpOutlined /> : <DownOutlined />}
-        >
-          <AddRouteHeader>AV21 | Přidej svou pouť</AddRouteHeader>
-        </Button>
+          onClick={() => toggleVisibility()}
+        />
+        <AddRouteHeader>AV21 | Informace</AddRouteHeader>
       </Header>
       <div style={{ ...contentStyle, height: isOpen ? '300px' : '0' }}>
         <Form />

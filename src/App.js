@@ -1,6 +1,6 @@
-import './App.css';
-import GoogleMap from './components/GoogleMap';
-import { AddRoute } from './components/AddRoute';
+import './App.css'
+import GoogleMap from './components/GoogleMap'
+import { AddRoute } from './components/AddRoute'
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
       <AddRoute />
       <GoogleMap />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
