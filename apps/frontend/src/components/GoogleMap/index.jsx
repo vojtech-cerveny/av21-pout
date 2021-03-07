@@ -11,9 +11,8 @@ const containerStyle = {
 
 function MyComponent() {
   const [isModalVisible, setIsModalVisible] = useState(false)
-
+  const [lastMarker, setLastMarker] = useState(0)
   const showModal = (route) => {
-    console.log(route)
     setIsModalVisible(route)
   }
 
@@ -32,11 +31,16 @@ function MyComponent() {
       let response = await fetch('http://192.168.0.50:3200/routes')
       response = await response.json()
       setRoutes(response)
-      console.log(routes)
+
     }
 
     fetchRoutes()
+    routes.forEach((route) => {
+      console.log(route.distance)
+      setLastMarker(prevState => prevState + route.distance)
+    })
   }, [])
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -45,26 +49,25 @@ function MyComponent() {
   const [map, setMap] = React.useState(null)
 
   const onLoad = React.useCallback(function callback(map) {
-    const bounds = new window.google.maps.LatLngBounds()
-    map.fitBounds(bounds)
+    // const bounds = new window.google.maps.LatLngBounds()
+    // bounds.extend(new window.google.maps.LatLng(gpsCoordinates[lastMarker][0],gpsCoordinates[lastMarker][1]))
+    // map.fitBounds(bounds)
+
+
     setMap(map)
   }, [])
 
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null)
   }, [])
-  let mapCenterIndex = 0
-  routes.forEach((route) => {
-    mapCenterIndex += route.distance
-  })
 
   let currentDistance = 0
-  console.log({ lat: gpsCoordinates[mapCenterIndex][0], lng: gpsCoordinates[mapCenterIndex][1] })
-  const title = `${isModalVisible.user} šel pouť ${isModalVisible.startPoint} - ${isModalVisible.endPoint} `
+  console.log({ lat: gpsCoordinates[lastMarker][0], lng: gpsCoordinates[lastMarker][1] })
+
   return isLoaded ? (
     <>
       <Modal
-        title={title}
+        title={`${isModalVisible.user} šel pouť ${isModalVisible.startPoint} - ${isModalVisible.endPoint}`}
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -85,7 +88,7 @@ function MyComponent() {
       </Modal>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={{ lat: gpsCoordinates[mapCenterIndex][0], lng: gpsCoordinates[mapCenterIndex][1] }}
+        center={{ lat: gpsCoordinates[lastMarker][0], lng: gpsCoordinates[lastMarker][1] }}
         zoom={11}
         onLoad={onLoad}
         onUnmount={onUnmount}
