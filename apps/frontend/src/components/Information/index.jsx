@@ -29,10 +29,6 @@ const Header = styled.div`
   display: flex;
   align-items: center;
 `
-const AddRouteHeader = styled.span`
-  padding-left: 15px;
-  font-size: 20px;
-`
 export const AddRoute = () => {
   const [isOpen, setIsOpen] = useState(true)
 
@@ -50,7 +46,7 @@ export const AddRoute = () => {
           icon={isOpen ? <UpOutlined /> : <DownOutlined />}
           onClick={() => toggleVisibility()}
         />
-        <AddRouteHeader>AV21 | Informace</AddRouteHeader>
+        <Form />
       </Header>
       <div style={{ ...contentStyle, height: isOpen ? '300px' : '0' }}>
         <Form />
