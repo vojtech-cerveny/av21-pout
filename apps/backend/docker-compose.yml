@@ -1,9 +1,16 @@
 version: '3.1'
 
 services:
+  backend: 
+    build: .
+    restart: always
+    env_file: 
+      - ./.env.docker
+    ports: 
+      - 3200:3200
 
   mongo:
     image: mongo
     restart: always
-    ports: 
-      - 27017:27017
+    expose: 
+      - 27017

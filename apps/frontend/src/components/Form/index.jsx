@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ImageUploader from 'react-images-upload'
 import axios from 'axios'
 import styled from 'styled-components'
-import { Input, Button } from 'antd'
+import { Input, Button, Modal } from 'antd'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -14,7 +14,7 @@ const Box = styled.div`
 `
 
 const toastOptions = {
-  position: "top-center",
+  position: 'top-center',
   autoClose: 5000,
   hideProgressBar: false,
   closeOnClick: true,
@@ -23,10 +23,10 @@ const toastOptions = {
   progress: undefined,
 }
 
-export const Form = () => {
-  const showSuccessToast = () =>  toast.success('🚶‍♂️Tvá pouť byla úspěšně vložena! 🎉', toastOptions)
-  const showErrorToast = () => toast.error("Neco se pokazilo! 😱", toastOptions)
-  const showMissingInfoToast = () => toast.warning("Musis vyplnit vsechny pole! 😱", toastOptions)
+export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
+  const showSuccessToast = () => toast.success('🚶‍♂️Tvá pouť byla úspěšně vložena! 🎉', toastOptions)
+  const showErrorToast = () => toast.error('Neco se pokazilo! 😱', toastOptions)
+  const showMissingInfoToast = () => toast.warning('Musis vyplnit vsechny pole! 😱', toastOptions)
   const [form, setForm] = useState({
     user: null,
     startPoint: null,
@@ -40,10 +40,9 @@ export const Form = () => {
   }
 
   const sendData = async () => {
-
     // eslint-disable-next-line no-unused-vars
     for (const [key, value] of Object.entries(form)) {
-      if(value == null) {
+      if (value == null) {
         showMissingInfoToast()
         return
       }
@@ -59,8 +58,8 @@ export const Form = () => {
     bodyFormData.append('image', form.picture)
     // TODO: Add URL of server somehow.
     await axios.post('http://192.168.0.50:3200/register', bodyFormData, config).then((res) => {
-      console.log(res)
       if (res.statusText === 'OK') {
+        setRefresh((prev) => !prev)
         setForm({
           user: null,
           startPoint: null,
@@ -75,8 +74,13 @@ export const Form = () => {
     })
   }
 
+  const handleOk = () => {
+    sendData()
+    onOk()
+  }
+
   return (
-    <Box>
+    <>
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -88,50 +92,61 @@ export const Form = () => {
         draggable
         pauseOnHover
       />
-      <Input
-        placeholder="Jméno"
-        value={form.user}
-        onChange={(e) => setForm({ ...form, user: e.target.value })}
-      />
-      <Input
-        placeholder="Výchozí místo"
-        value={form.startPoint}
-        onChange={(e) => setForm({ ...form, startPoint: e.target.value })}
-      />
-      <Input
-        placeholder="Cilove misto"
-        value={form.endPoint}
-        onChange={(e) => setForm({ ...form, endPoint: e.target.value })}
-      />
-      <Input
-        placeholder="Pocet km"
-        value={form.distance}
-        type="number"
-        onChange={(e) => setForm({ ...form, distance: e.target.value })}
-      />
-      {form.picture ? (
-        <div>
-          <img
-            src={URL.createObjectURL(form.picture)}
-            alt="Tvoje fotecka"
-            width="100%"
-            style={{ paddingTop: '10px' }}
+      <Modal
+        title={'blabla'}
+        visible={visible}
+        onOk={() => handleOk}
+        onCancel={onCancel}
+        footer={[
+          <Button key="submit" type="primary" onClick={handleOk}>
+            Přidej mojí pouť!
+          </Button>,
+        ]}
+      >
+        <Box>
+          <Input
+            placeholder="Jméno"
+            value={form.user}
+            onChange={(e) => setForm({ ...form, user: e.target.value })}
           />
-        </div>
-      ) : (
-        <ImageUploader
-          withIcon={false}
-          buttonText="Vyber svoji fotku z pouti!"
-          onChange={(pict) => onDrop(pict)}
-          label="Max 10MB, akceptujeme .JPG a .PNG "
-          imgExtension={['.jpg', '.png']}
-          maxFileSize={10242880}
-          singleImage={true}
-        />
-      )}
-      <Button style={{ width: '100%' }} type="primary" onClick={() => sendData()}>
-        Přidej mou pouť!
-      </Button>
-    </Box>
+          <Input
+            placeholder="Výchozí místo"
+            value={form.startPoint}
+            onChange={(e) => setForm({ ...form, startPoint: e.target.value })}
+          />
+          <Input
+            placeholder="Cilove misto"
+            value={form.endPoint}
+            onChange={(e) => setForm({ ...form, endPoint: e.target.value })}
+          />
+          <Input
+            placeholder="Pocet km"
+            value={form.distance}
+            type="number"
+            onChange={(e) => setForm({ ...form, distance: e.target.value })}
+          />
+          {form.picture ? (
+            <div>
+              <img
+                src={URL.createObjectURL(form.picture)}
+                alt="Tvoje fotecka"
+                width="100%"
+                style={{ paddingTop: '10px' }}
+              />
+            </div>
+          ) : (
+            <ImageUploader
+              withIcon={false}
+              buttonText="Vyber svoji fotku z pouti!"
+              onChange={(pict) => onDrop(pict)}
+              label="Max 10MB, akceptujeme .JPG a .PNG "
+              imgExtension={['.jpg', '.png']}
+              maxFileSize={10242880}
+              singleImage={true}
+            />
+          )}
+        </Box>
+      </Modal>
+    </>
   )
 }

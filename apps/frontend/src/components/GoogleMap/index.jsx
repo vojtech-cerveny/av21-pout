@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api'
 import { Modal, Button } from 'antd'
-import { random_rgba } from '../../utils/color'
 import gpsCoordinates from '../../data/points.json'
 
 const containerStyle = {
@@ -9,60 +8,51 @@ const containerStyle = {
   height: '100vh',
 }
 
-function MyComponent() {
+function AvMap({ routes }) {
+  
+  //modal
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [lastMarker, setLastMarker] = useState(0)
-  const showModal = (route) => {
+  const handleOk = () => setIsModalVisible(false)
+  const handleCancel = () => setIsModalVisible(false)
+  const showModal = (route, point) => {
     setIsModalVisible(route)
+    setPoint(point)
   }
+  let sumDistance = 0
+  routes.forEach((route) => (sumDistance += route.distance))
+  let currentDistance = 0
 
-  const handleOk = () => {
-    setIsModalVisible(false)
-  }
-
-  const handleCancel = () => {
-    setIsModalVisible(false)
-  }
-
-  const [routes, setRoutes] = useState([])
-
-  useEffect(() => {
-    async function fetchRoutes() {
-      let response = await fetch('http://192.168.0.50:3200/routes')
-      response = await response.json()
-      setRoutes(response)
-
-    }
-
-    fetchRoutes()
-    routes.forEach((route) => {
-      console.log(route.distance)
-      setLastMarker(prevState => prevState + route.distance)
-    })
-  }, [])
-
+  const [point, setPoint] = useState(
+    routes.length === 0
+      ? { lat: gpsCoordinates[0][0], lng: gpsCoordinates[0][1] }
+      : { lat: gpsCoordinates[sumDistance][0], lng: gpsCoordinates[sumDistance][1] },
+  )
+  const [map, setMap] = React.useState(null)
+  const mapRef = useRef(null)
+  console.log(point)
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
   })
 
-  const [map, setMap] = React.useState(null)
+  const handleCenter = () => {
+    if (!mapRef.current) return
+
+    const newPos = mapRef.current.getCenter().toJSON()
+    setPoint(newPos)
+  }
 
   const onLoad = React.useCallback(function callback(map) {
     // const bounds = new window.google.maps.LatLngBounds()
-    // bounds.extend(new window.google.maps.LatLng(gpsCoordinates[lastMarker][0],gpsCoordinates[lastMarker][1]))
+    // bounds.extend(new window.google.maps.LatLng(gpsCoordinates[4][0],gpsCoordinates[4][1]))
     // map.fitBounds(bounds)
-
-
+    mapRef.current = map
     setMap(map)
   }, [])
 
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null)
   }, [])
-
-  let currentDistance = 0
-  console.log({ lat: gpsCoordinates[lastMarker][0], lng: gpsCoordinates[lastMarker][1] })
 
   return isLoaded ? (
     <>
@@ -80,18 +70,20 @@ function MyComponent() {
         <p>Vzdálenost: {isModalVisible?.distance || 0}</p>
         <p>
           <img
-            src={`http://localhost:3200/images/${isModalVisible.imagePath}`}
+            src={`http://192.168.0.50:3200/images/${isModalVisible.imagePath}`}
             width="100%"
             alt="obr"
           />
         </p>
       </Modal>
       <GoogleMap
+        onDragEnd={handleCenter}
         mapContainerStyle={containerStyle}
-        center={{ lat: gpsCoordinates[lastMarker][0], lng: gpsCoordinates[lastMarker][1] }}
-        zoom={11}
+        center={point}
+        zoom={8}
         onLoad={onLoad}
         onUnmount={onUnmount}
+        onZoomChanged={(e)=>console.log(e)}
       >
         {routes.map((route, index, arr) => {
           const startPosition = {
@@ -111,7 +103,7 @@ function MyComponent() {
                 path={[startPosition, endPosition]}
                 onClick={() => alert('wohou')}
                 options={{
-                  strokeColor: random_rgba(),
+                  strokeColor: route.color || 'blue',
                   strokeOpacity: 0.8,
                   strokeWeight: 10,
                   fillOpacity: 0.35,
@@ -120,10 +112,14 @@ function MyComponent() {
                   editable: false,
                   visible: true,
                   zIndex: 1,
-                  fillColor: random_rgba(),
+                  fillColor: route.color || 'blue',
                 }}
               />
-              <Marker position={endPosition} onClick={() => showModal(route)} />
+              <Marker
+                position={endPosition}
+                icon={'/marker.svg'}
+                onClick={() => showModal(route, endPosition)}
+              />
             </>
           )
         })}
@@ -159,4 +155,4 @@ function MyComponent() {
   )
 }
 
-export default React.memo(MyComponent)
+export default React.memo(AvMap)
