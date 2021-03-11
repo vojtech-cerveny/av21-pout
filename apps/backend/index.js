@@ -5,7 +5,7 @@ const sharp = require('sharp')
 const cors = require('cors')
 const fs = require('fs')
 
-const DB_URL = 'mongodb://mongo:27017/av21-pout'
+const DB_URL = `mongodb://${process.env.ENV === 'docker' ? 'mongo' : 'localhost'}:27017/av21-pout`
 const DB_NAME = 'av-routes'
 const client = require('mongodb').MongoClient;
 const { random_rgba, sendSlackMessage } = require('./utils/utils');
@@ -74,30 +74,34 @@ app.post('/register', (req, res, next) => {
     }
     const newRoute = JSON.parse(fields.routeInfo)
     newRoute.distance = Number.parseInt(newRoute.distance)
-    sharp(files.image.path)
+    newRoute.id = uuidv4().split('-')[0]
+    newRoute.color = random_rgba()
+    newRoute.imagePathSmall = `${UUID}-small.${files.image.type.split('/')[1]}`
+    newRoute.imagePath = `${UUID}.${files.image.type.split('/')[1]}`
+    await sharp(files.image.path)
       .resize({ width: 500 })
-      .toFile(`${__dirname}/public/images/${UUID}.${files.image.type.split('/')[1]}`)
-      .then(() => {
-        newRoute.imagePath = `${UUID}.${files.image.type.split('/')[1]}`
-        newRoute.id = uuidv4().split('-')[0]
-        newRoute.color = random_rgba()
+      .toFile(`${__dirname}/public/images/${newRoute.imagePathSmall}`)
 
-        client.connect(DB_URL, function (err, client) {
-          if (err) throw err
+    await sharp(files.image.path)
+      .resize({ width: 1200 })
+      .toFile(`${__dirname}/public/images/${newRoute.imagePath}`)
 
-          var db = client.db(DB_NAME)
-          db.collection("routes").insertOne(newRoute, async function (err, result) {
-            if (err) {
-              res.send(err)
-            }
-            console.log(`Inserted route ${newRoute.id} - ${newRoute.user} ${newRoute.startPoint} ${newRoute.endPoint} ${newRoute.distance}`);
-            await sendSlackMessage(result.ops[0])
-            client.close();
-            res.json(result)
-          });
+    client.connect(DB_URL, async function (err, client) {
+      if (err)
+        throw err;
 
-        })
-      })
+      var db = client.db(DB_NAME);
+      db.collection("routes").insertOne(newRoute, async function (err, result) {
+        if (err) {
+          res.send(err);
+        }
+        console.log(`Inserted route ${newRoute.id} - ${newRoute.user} ${newRoute.startPoint} ${newRoute.endPoint} ${newRoute.distance}`);
+        await sendSlackMessage(result.ops[0]);
+        client.close();
+        res.json(result.result);
+      });
+
+    })
     // add another information
 
   });

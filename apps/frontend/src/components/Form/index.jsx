@@ -6,6 +6,8 @@ import { Input, Button, Modal } from 'antd'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+const { TextArea } = Input
+
 const Box = styled.div`
   & > input,
   button {
@@ -56,26 +58,33 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
     const bodyFormData = new FormData()
     bodyFormData.set('routeInfo', JSON.stringify(form))
     bodyFormData.append('image', form.picture)
-    // TODO: Add URL of server somehow.
-    await axios.post('http://192.168.0.50:3200/register', bodyFormData, config).then((res) => {
-      if (res.statusText === 'OK') {
-        setRefresh((prev) => !prev)
-        setForm({
-          user: null,
-          startPoint: null,
-          endPoint: null,
-          distance: null,
-          picture: null,
-        })
-        showSuccessToast()
-      } else {
-        showErrorToast()
-      }
-    })
+
+    await axios
+      .post(`${process.env.REACT_APP_SERVER}/register`, bodyFormData, config)
+      .then((res) => {
+        if (res.statusText === 'OK') {
+          setRefresh((prev) => !prev)
+          setForm({
+            user: null,
+            startPoint: null,
+            endPoint: null,
+            distance: null,
+            picture: null,
+            note: null,
+          })
+          showSuccessToast()
+        } else {
+          showErrorToast()
+        }
+      })
   }
 
   const handleOk = () => {
     sendData()
+    onOk()
+  }
+
+  const handleInfoOk = () => {
     onOk()
   }
 
@@ -92,61 +101,136 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
         draggable
         pauseOnHover
       />
-      <Modal
-        title={'blabla'}
-        visible={visible}
-        onOk={() => handleOk}
-        onCancel={onCancel}
-        footer={[
-          <Button key="submit" type="primary" onClick={handleOk}>
-            Přidej mojí pouť!
-          </Button>,
-        ]}
-      >
-        <Box>
-          <Input
-            placeholder="Jméno"
-            value={form.user}
-            onChange={(e) => setForm({ ...form, user: e.target.value })}
-          />
-          <Input
-            placeholder="Výchozí místo"
-            value={form.startPoint}
-            onChange={(e) => setForm({ ...form, startPoint: e.target.value })}
-          />
-          <Input
-            placeholder="Cilove misto"
-            value={form.endPoint}
-            onChange={(e) => setForm({ ...form, endPoint: e.target.value })}
-          />
-          <Input
-            placeholder="Pocet km"
-            value={form.distance}
-            type="number"
-            onChange={(e) => setForm({ ...form, distance: e.target.value })}
-          />
-          {form.picture ? (
-            <div>
-              <img
-                src={URL.createObjectURL(form.picture)}
-                alt="Tvoje fotecka"
-                width="100%"
-                style={{ paddingTop: '10px' }}
+      {visible === 'addRoute' && (
+        <Modal
+          title={
+            <>
+              <h2>
+                <img src="/logo.svg" alt="logo" width="40px" style={{ paddingRight: '10px' }} />
+                Přidej svoji pouť!
+              </h2>
+            </>
+          }
+          visible={visible}
+          onOk={() => handleOk}
+          onCancel={onCancel}
+          footer={[
+            <Button
+              key="submit"
+              type="primary"
+              style={{ background: '#1FAAAA', borderColor: '#1FAAAA' }}
+              onClick={handleOk}
+            >
+              Přidej mojí pouť!
+            </Button>,
+          ]}
+        >
+          <Box>
+            <Input
+              placeholder="Jméno"
+              value={form.user}
+              onChange={(e) => setForm({ ...form, user: e.target.value })}
+            />
+            <Input
+              placeholder="Výchozí místo"
+              value={form.startPoint}
+              onChange={(e) => setForm({ ...form, startPoint: e.target.value })}
+            />
+            <Input
+              placeholder="Cílové místo"
+              value={form.endPoint}
+              onChange={(e) => setForm({ ...form, endPoint: e.target.value })}
+            />
+            <Input
+              placeholder="Počet km"
+              value={form.distance}
+              type="number"
+              onChange={(e) => setForm({ ...form, distance: e.target.value })}
+            />
+            <div style={{ margin: '10px 0px 25px' }}>
+              <TextArea
+                placeholder="Poznámka"
+                value={form.note}
+                showCount
+                maxLength={144}
+                autoSize={{ minRows: 2, maxRows: 4 }}
+                onChange={(e) => setForm({ ...form, note: e.target.value })}
               />
             </div>
-          ) : (
-            <ImageUploader
-              withIcon={false}
-              buttonText="Vyber svoji fotku z pouti!"
-              onChange={(pict) => onDrop(pict)}
-              label="Max 10MB, akceptujeme .JPG a .PNG "
-              imgExtension={['.jpg', '.png']}
-              maxFileSize={10242880}
-              singleImage={true}
-            />
-          )}
-        </Box>
-      </Modal>
+
+            {form.picture ? (
+              <div>
+                <img
+                  src={URL.createObjectURL(form.picture)}
+                  alt="Tvoje fotecka"
+                  width="100%"
+                  style={{ margin: '10px' }}
+                />
+              </div>
+            ) : (
+              <ImageUploader
+                withIcon={false}
+                buttonText="Vyber svoji fotku z pouti!"
+                onChange={(pict) => onDrop(pict)}
+                label="Max 10MB, akceptujeme .JPG, .JPEG a .PNG"
+                imgExtension={['.jpg', '.png', '.jpeg']}
+                maxFileSize={10242880}
+                singleImage={true}
+                style={{ textAlign: 'center', borderShadow: 'none' }}
+                buttonStyles={{
+                  color: '#fff',
+                  background: '#1FAAAA',
+                  borderColor: '#1FAAAA',
+                  textShadow: '0 -1px 0 rgba(0, 0, 0, 0.12)',
+                  borderRadius: '2px',
+                }}
+              />
+            )}
+          </Box>
+        </Modal>
+      )}
+      {visible === 'info' && (
+        <Modal
+          title={
+            <>
+              <h2>
+                <img src="/logo.svg" alt="logo" width="40px" style={{ paddingRight: '10px' }} />
+                Informace
+              </h2>
+            </>
+          }
+          visible={visible}
+          onOk={() => handleInfoOk}
+          onCancel={onCancel}
+          footer={[
+            <Button
+              key="submit"
+              type="primary"
+              style={{ background: '#1FAAAA', borderColor: '#1FAAAA' }}
+              onClick={handleInfoOk}
+            >
+              OK
+            </Button>,
+          ]}
+        >
+          <Box>
+            <p>
+              Vydej se s námi na pouť. Vycházíme ze Soluně a cílem je Velehrad. Místo, kde se dá-li
+              Pán potkáme i letos v srpnu na AV21. Čeká nás krásných 1200km. Pro jednoho nemožné.
+              Když spojíme síly, cíle dosáhneme.
+            </p>
+            <p>
+              Jak to bude probíhat? Každý se sám ve svém okolí, vypraví na pouť, nebo i několik
+              poutí. Cílem může být <b>poutní místo, kříž, boží muka</b>. Pokud v Tvém okolí nic podobného
+              není, nevadí. Důležité je vyjít. Tam kam dojdeš, pak postav alespoň malý křížek.
+              Nakonec vyfoť fotku sebe a svého cíle putování. Fotku společně s počtem ušlých
+              kilometrů nahraj do poutní aplikace. Tvé kilometry se připočtou k naší společné cestě
+              a posunou nás blíže k Velehradu. Ke svým úmyslům můžeš mimo jiné připojit i modlitbu
+              za zdárný průběh AV21.
+            </p>
+          </Box>
+        </Modal>
+      )}
     </>
   )
 }

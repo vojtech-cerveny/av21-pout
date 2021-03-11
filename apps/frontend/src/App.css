@@ -1,5 +1,9 @@
 @import '~antd/dist/antd.css';
-@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Russo+One&display=swap');
+
+body {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+}
 
 .App {
   text-align: center;
@@ -15,7 +19,39 @@ h6,
   font-family: 'Hammersmith One', sans-serif;
 }
 
+.av21 {
+  font-family: 'Russo One', sans-serif;
+}
+
 /* Remove black border */
 *:focus {
   outline: none;
+}
+
+
+.timeline-item-title.active {
+  color: white !important;
+  padding: 10px;
+  font-size: x-large !important;
+}
+
+.timeline-item-title
+{
+  font-size: large !important;
+}
+
+@media (min-width: 768px) {
+  .vertical-item-row {
+    margin-top: -100px !important;
+  } 
+}
+
+.vertical-item-row:first-child {
+  margin-top: 0 !important;
+}
+
+.timeline-card-content {
+  background-color: #e8e8e8 !important;
+  -webkit-filter: drop-shadow(0 3px 1px rgba(0, 0, 0, 0.2))  !important;
+  filter: drop-shadow(0 3px 1px rgba(0, 0, 0, 0.2)) !important;
 }

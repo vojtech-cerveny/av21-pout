@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import styled from 'styled-components'
 import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api'
 import { Modal, Button } from 'antd'
 import gpsCoordinates from '../../data/points.json'
@@ -8,8 +9,14 @@ const containerStyle = {
   height: '100vh',
 }
 
+const MarkerImageModal = styled.img`
+  position: absolute;
+  top: -61px;
+  right: calc(50% - 43px);
+  width: 86px;
+`
+
 function AvMap({ routes }) {
-  
   //modal
   const [isModalVisible, setIsModalVisible] = useState(false)
   const handleOk = () => setIsModalVisible(false)
@@ -57,24 +64,51 @@ function AvMap({ routes }) {
   return isLoaded ? (
     <>
       <Modal
-        title={`${isModalVisible.user} šel pouť ${isModalVisible.startPoint} - ${isModalVisible.endPoint}`}
+        title={
+          <>
+            <h2>
+              Detail
+            </h2>
+          </>
+        }
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+            style={{ background: '#1FAAAA', borderColor: '#1FAAAA' }}
+          >
             OK
           </Button>,
         ]}
       >
-        <p>Vzdálenost: {isModalVisible?.distance || 0}</p>
+        <MarkerImageModal src="/marker.svg" alt="Marker" />
+        <div style={{fontSize: "larger"}}>
+          <span style={{ fontWeight: 'bold' }}>Poutník:</span> {isModalVisible?.user || 0} <br />
+          <span style={{ fontWeight: 'bold' }}>Cesta:</span> {isModalVisible?.startPoint} -{' '}
+          {isModalVisible?.endPoint} <br />
+          <span style={{ fontWeight: 'bold' }}>Vzdálenost:</span> {isModalVisible?.distance || 0} km{' '}
+          <br />
+          {isModalVisible.note && (
+          <p
+            style={{ fontStyle: 'italic', fontSize: 'larger', marginTop: '20px', color: '#262626' }}
+          >
+            {isModalVisible.note}
+          </p>
+        )}
+        </div>
         <p>
           <img
-            src={`http://192.168.0.50:3200/images/${isModalVisible.imagePath}`}
+            src={`${process.env.REACT_APP_SERVER}/images/${isModalVisible.imagePath}`}
             width="100%"
             alt="obr"
+            style={{marginTop: "10px", borderRadius: "5px"}}
           />
         </p>
+        
       </Modal>
       <GoogleMap
         onDragEnd={handleCenter}
@@ -83,7 +117,7 @@ function AvMap({ routes }) {
         zoom={8}
         onLoad={onLoad}
         onUnmount={onUnmount}
-        onZoomChanged={(e)=>console.log(e)}
+        onZoomChanged={(e) => console.log(e)}
       >
         {routes.map((route, index, arr) => {
           const startPosition = {
