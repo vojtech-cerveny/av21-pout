@@ -15,7 +15,7 @@ function App() {
   const [refresh, setRefresh] = useState(false)
   useEffect(() => {
     async function fetchRoutes() {
-      let response = await fetch('http://192.168.0.50:3200/routes')
+      let response = await fetch(`${process.env.REACT_APP_SERVER}/routes`)
       response = await response.json()
       setRoutes(response)
     }
