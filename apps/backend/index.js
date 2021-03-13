@@ -43,7 +43,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 app.use(cors())
 app.use(express.static('public'));
-process.env.ENV === 'docker' && app.use('/api', createProxyMiddleware('https://absolventskyvelehrad.cz/api'));
+process.env.ENV === 'docker' && app.use('/api', createProxyMiddleware('https://pout.absolventskyvelehrad.cz/api'));
 
 // All controllers should live here
 app.get("/", function rootHandler(req, res) {
