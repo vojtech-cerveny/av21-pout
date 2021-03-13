@@ -8,6 +8,7 @@ const cors = require('cors')
 const fs = require('fs')
 const Sentry = require('@sentry/node');
 const Tracing = require("@sentry/tracing");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const DB_URL = `mongodb://${process.env.ENV === 'docker' ? 'mongo' : 'localhost'}:27017/av21-pout`
 const DB_NAME = 'av-routes'
@@ -42,6 +43,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 app.use(cors())
 app.use(express.static('public'));
+process.env.ENV === 'docker' && app.use('/api', createProxyMiddleware('https://absolventskyvelehrad.cz/api'));
 
 // All controllers should live here
 app.get("/", function rootHandler(req, res) {
