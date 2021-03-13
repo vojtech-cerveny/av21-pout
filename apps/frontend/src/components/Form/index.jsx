@@ -81,6 +81,18 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
       })
   }
 
+  const handleCancel = () => {
+    setForm({
+      user: null,
+      startPoint: null,
+      endPoint: null,
+      distance: null,
+      picture: null,
+      note: null,
+    })
+    onCancel()
+  }
+
   const handleOk = async () => {
     setSending(true)
     await sendData()
@@ -116,7 +128,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
           }
           visible={visible}
           onOk={() => handleOk}
-          onCancel={onCancel}
+          onCancel={handleCancel}
           footer={[
             <Button
               key="submit"
@@ -168,7 +180,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
                   src={URL.createObjectURL(form.picture)}
                   alt="Tvoje fotečka"
                   width="100%"
-                  style={{ margin: '10px' }}
+                  style={{ margin: '10px'}}
                 />
               </div>
             ) : (
@@ -220,7 +232,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
           <Box>
             <p>
               Vydej se s námi na pouť. Vycházíme ze Soluně a cílem je Velehrad. Místo, kde se dá-li
-              Pán potkáme i letos v srpnu na AV21. Čeká nás krásných 1200km. Pro jednoho nemožné.
+              Pán potkáme i letos v srpnu na AV21. Čeká nás krásných 1200 km. Pro jednoho nemožné.
               Když spojíme síly, cíle dosáhneme.
             </p>
             <p>

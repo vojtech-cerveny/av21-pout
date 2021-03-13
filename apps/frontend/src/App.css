@@ -4,6 +4,9 @@
 body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
+p {
+  font-size: larger;
+}
 
 .App {
   text-align: center;
@@ -21,6 +24,14 @@ h6,
 
 .av21 {
   font-family: 'Russo One', sans-serif;
+}
+
+input, textarea {
+  font-size: larger !important;
+}
+
+.ant-btn {
+  padding-bottom: 20px !important;
 }
 
 /* Remove black border */

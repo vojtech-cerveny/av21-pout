@@ -3,15 +3,19 @@ import { Chrono } from 'react-chrono'
 
 export const Timeline = ({ routes }) => {
   const [width, setWidth] = useState(window.innerWidth)
-
+  const isMobile = width < 768
   let distance = 0
   const routeItems = routes.map((route) => {
     distance += route.distance
     return {
-      title: `${route.distance === distance ? 0 : route.distance}-${distance} km`,
+      title: isMobile
+        ? ``
+        : `Část ${route.distance === distance ? 0 : distance - route.distance} - ${distance} km. Přidáno ${
+            route.distance
+          } km`,
     }
   })
-
+  distance = 0
   return (
     <>
       <h2 style={{ padding: '0 2rem' }}>Společně jsme ušli {distance} km z 1200 km!</h2>
@@ -19,10 +23,11 @@ export const Timeline = ({ routes }) => {
         <Chrono
           items={routeItems}
           slideShow
-          mode={width >= 768 ? "VERTICAL_ALTERNATING" : "VERTICAL"}
+          mode={width >= 768 ? 'VERTICAL_ALTERNATING' : 'VERTICAL'}
           theme={{ primary: '#2D4552', secondary: '#FF5D3A' }}
         >
           {routes.map((route) => {
+            distance += route.distance
             return (
               <div key={route.id}>
                 <h2
@@ -42,6 +47,12 @@ export const Timeline = ({ routes }) => {
                 >
                   {route.startPoint} ➡ {route.endPoint}
                 </h3>
+                {isMobile && (
+                  <p>
+                    Část poutě {route.distance === distance ? 0 : distance - route.distance}-
+                    {distance} km. Přidáno {route.distance} km
+                  </p>
+                )}
                 <img
                   src={`${process.env.REACT_APP_SERVER}/images/${route.imagePathSmall}`}
                   width="100%"

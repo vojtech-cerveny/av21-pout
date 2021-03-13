@@ -66,9 +66,7 @@ function AvMap({ routes }) {
       <Modal
         title={
           <>
-            <h2>
-              Detail
-            </h2>
+            <h2>Detail</h2>
           </>
         }
         visible={isModalVisible}
@@ -86,29 +84,33 @@ function AvMap({ routes }) {
         ]}
       >
         <MarkerImageModal src="/marker.svg" alt="Marker" />
-        <div style={{fontSize: "larger"}}>
+        <div style={{ fontSize: 'larger' }}>
           <span style={{ fontWeight: 'bold' }}>Poutník:</span> {isModalVisible?.user || 0} <br />
           <span style={{ fontWeight: 'bold' }}>Cesta:</span> {isModalVisible?.startPoint} -{' '}
           {isModalVisible?.endPoint} <br />
           <span style={{ fontWeight: 'bold' }}>Vzdálenost:</span> {isModalVisible?.distance || 0} km{' '}
           <br />
           {isModalVisible.note && (
-          <p
-            style={{ fontStyle: 'italic', fontSize: 'larger', marginTop: '20px', color: '#262626' }}
-          >
-            {isModalVisible.note}
-          </p>
-        )}
+            <p
+              style={{
+                fontStyle: 'italic',
+                fontSize: 'larger',
+                marginTop: '20px',
+                color: '#262626',
+              }}
+            >
+              {isModalVisible.note}
+            </p>
+          )}
         </div>
         <p>
           <img
             src={`${process.env.REACT_APP_SERVER}/images/${isModalVisible.imagePath}`}
             width="100%"
             alt="obr"
-            style={{marginTop: "10px", borderRadius: "5px"}}
+            style={{ marginTop: '10px', borderRadius: '5px' }}
           />
         </p>
-        
       </Modal>
       <GoogleMap
         onDragEnd={handleCenter}
@@ -157,6 +159,10 @@ function AvMap({ routes }) {
             </>
           )
         })}
+        <Marker
+          position={{lat: gpsCoordinates[gpsCoordinates.length-1][0], lng: gpsCoordinates[gpsCoordinates.length-1][1]}}
+          icon={'/marker-velehrad.png'}
+        />
         <Polyline
           path={[
             {

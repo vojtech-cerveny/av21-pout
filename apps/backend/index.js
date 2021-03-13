@@ -80,26 +80,6 @@ app.get('/routes', (req, res) => {
   })
 })
 
-app.get('/latest', (req, res) => {
-  client.connect(DB_URL, (err, client) => {
-    if (err) throw err
-    var db = client.db(DB_NAME)
-    db.collection("routes")
-      .aggregate([
-        {
-          total: { $sum: "$distance" }
-        }
-      ]
-        , function (err, result) {
-          console.log(result);
-          console.log(result[0])
-          client.close();
-          res.json(result[0])
-        }
-      );
-  })
-})
-
 app.post('/register', (req, res, next) => {
   const UUID = uuidv4().split('-')[0]
   const form = formidable({ multiples: true });
@@ -115,6 +95,7 @@ app.post('/register', (req, res, next) => {
     newRoute.color = random_rgba()
     newRoute.imagePathSmall = `${UUID}-small.${files.image.type.split('/')[1]}`
     newRoute.imagePath = `${UUID}.${files.image.type.split('/')[1]}`
+
     await sharp(files.image.path)
       .resize({ width: 500 })
       .toFile(`${__dirname}/public/images/${newRoute.imagePathSmall}`)
