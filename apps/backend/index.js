@@ -1,9 +1,13 @@
+require('dotenv').config()
+
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const formidable = require('formidable');
 const sharp = require('sharp')
 const cors = require('cors')
 const fs = require('fs')
+const Sentry = require('@sentry/node');
+const Tracing = require("@sentry/tracing");
 
 const DB_URL = `mongodb://${process.env.ENV === 'docker' ? 'mongo' : 'localhost'}:27017/av21-pout`
 const DB_NAME = 'av-routes'
@@ -12,8 +16,41 @@ const { random_rgba, sendSlackMessage } = require('./utils/utils');
 
 
 const app = express();
+
+
+
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN || "https://320e34524adb463e9a673c562ec7b4ac@o485634.ingest.sentry.io/5674546",
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({ tracing: true }),
+    // enable Express.js middleware tracing
+    new Tracing.Integrations.Express({ app }),
+  ],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
+// RequestHandler creates a separate execution context using domains, so that every
+// transaction/span/breadcrumb is attached to its own Hub instance
+app.use(Sentry.Handlers.requestHandler());
+// TracingHandler creates a trace for every incoming request
+app.use(Sentry.Handlers.tracingHandler());
 app.use(cors())
 app.use(express.static('public'));
+
+// All controllers should live here
+app.get("/", function rootHandler(req, res) {
+  res.end("Hello world!");
+});
+
+// The error handler must be before any other error middleware and after all controllers
+
+
 
 if (!fs.existsSync(`${__dirname}/public/images/`)) {
   fs.mkdirSync(`${__dirname}/public/`, (err) => {
@@ -35,7 +72,7 @@ app.get('/routes', (req, res) => {
     if (err) throw err
 
     var db = client.db(DB_NAME)
-    await db.collection("routes").find({}).toArray(async function (err, result) {
+    db.collection("routes").find({}).toArray(async function (err, result) {
       if (err) throw err;
       client.close();
       res.json(result)
@@ -100,10 +137,7 @@ app.post('/register', (req, res, next) => {
         client.close();
         res.json(result.result);
       });
-
     })
-    // add another information
-
   });
 });
 
@@ -121,6 +155,9 @@ app.get('/delete/:routeId?', function (req, res) {
       );
   })
 })
+
+
+app.use(Sentry.Handlers.errorHandler());
 
 app.listen(3200, () => {
   console.log('Server listening on http://localhost:3200 ...');

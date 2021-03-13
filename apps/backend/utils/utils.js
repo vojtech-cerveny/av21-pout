@@ -7,16 +7,10 @@ exports.random_rgba = function random_rgba() {
   return 'rgb(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ')'
 }
 
+
+
 exports.sendSlackMessage = async function sendSlackMessage(route) {
-  const URL = "https://hooks.slack.com/services/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"
-  const config = { 'Content-type': 'application/json' };
-  const data = {
-    "blocks": [
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": `
+  let text = `
 Ahoj, poutník *${route.user}* vložil novou pouť! \n 
 Můžeš prosím zkontrolovat, že je všechno v pořádku a pokud ne, tak příspěvek smazat? Díky!\n
 👧🧒➡️⛪️\n
@@ -26,6 +20,19 @@ Můžeš prosím zkontrolovat, že je všechno v pořádku a pokud ne, tak pří
 • *endPoint*: ${route.endPoint} \n
 • *id*: ${route.id} \n
             `
+  let imageUrl = process.env.ENV === 'localhost' ? 'https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg&w=400&fit=max' : `${process.env.SERVER_URL}/images/${route.imagePath}`
+  let urlToDelete = `${process.env.SERVER_URL}/delete/${route.id}?adminToken=${process.env.ADMIN_TOKEN}`
+
+
+  const URL = process.env.SLACK_URL
+  const config = { 'Content-type': 'application/json' };
+  const data = {
+    "blocks": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": text
         }
       },
       {
@@ -38,7 +45,7 @@ Můžeš prosím zkontrolovat, že je všechno v pořádku a pokud ne, tak pří
           "text": "selfie",
           "emoji": true
         },
-        "image_url": `${process.env.SERVER_URL}/images/${route.imagePath}`,
+        "image_url": imageUrl,
         "alt_text": "selfie z poute"
       },
       {
@@ -55,11 +62,12 @@ Můžeš prosím zkontrolovat, že je všechno v pořádku a pokud ne, tak pří
               "emoji": true
             },
             "value": "click_me_123",
-            "url": `${process.env.SERVER_URL}/delete/${route.id}?adminToken=${process.env.ADMIN_TOKEN}`
+            "url": urlToDelete
           }
         ]
       }
     ]
   };
   axios.post(URL, data, config)
+    .catch(e => console.log(e))
 }

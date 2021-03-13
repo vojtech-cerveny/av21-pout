@@ -26,6 +26,7 @@ const toastOptions = {
 }
 
 export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
+  const [isSending, setSending] = useState(false)
   const showSuccessToast = () => toast.success('🚶‍♂️Tvá pouť byla úspěšně vložena! 🎉', toastOptions)
   const showErrorToast = () => toast.error('Neco se pokazilo! 😱', toastOptions)
   const showMissingInfoToast = () => toast.warning('Musis vyplnit vsechny pole! 😱', toastOptions)
@@ -73,15 +74,17 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
             note: null,
           })
           showSuccessToast()
+          onOk()
         } else {
           showErrorToast()
         }
       })
   }
 
-  const handleOk = () => {
-    sendData()
-    onOk()
+  const handleOk = async () => {
+    setSending(true)
+    await sendData()
+    setSending(false)
   }
 
   const handleInfoOk = () => {
@@ -120,6 +123,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
               type="primary"
               style={{ background: '#1FAAAA', borderColor: '#1FAAAA' }}
               onClick={handleOk}
+              loading={isSending}
             >
               Přidej mojí pouť!
             </Button>,
@@ -132,12 +136,12 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
               onChange={(e) => setForm({ ...form, user: e.target.value })}
             />
             <Input
-              placeholder="Výchozí místo"
+              placeholder="Tvé výchozí místo"
               value={form.startPoint}
               onChange={(e) => setForm({ ...form, startPoint: e.target.value })}
             />
             <Input
-              placeholder="Cílové místo"
+              placeholder="Tvé cílové místo"
               value={form.endPoint}
               onChange={(e) => setForm({ ...form, endPoint: e.target.value })}
             />
@@ -162,7 +166,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
               <div>
                 <img
                   src={URL.createObjectURL(form.picture)}
-                  alt="Tvoje fotecka"
+                  alt="Tvoje fotečka"
                   width="100%"
                   style={{ margin: '10px' }}
                 />
