@@ -19,10 +19,11 @@ const { random_rgba, sendSlackMessage } = require('./utils/utils');
 const app = express();
 
 
-
+const isProduction = () => process.env.ENV === 'docker'
+const proxyPath = isProduction() ? '/api' : ''
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN || "https://320e34524adb463e9a673c562ec7b4ac@o485634.ingest.sentry.io/5674546",
+  dsn: process.env.SENTRY_DSN,
   integrations: [
     // enable HTTP calls tracing
     new Sentry.Integrations.Http({ tracing: true }),
@@ -42,8 +43,7 @@ app.use(Sentry.Handlers.requestHandler());
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
 app.use(cors())
-app.use(express.static('public'));
-process.env.ENV === 'docker' && app.use('/api', createProxyMiddleware('https://pout.absolventskyvelehrad.cz/api'));
+app.use(proxyPath,express.static('public'));
 
 // All controllers should live here
 app.get("/", function rootHandler(req, res) {
@@ -63,13 +63,13 @@ if (!fs.existsSync(`${__dirname}/public/images/`)) {
   })
 }
 
-app.get('/', (req, res) => {
+app.get(proxyPath + '/', (req, res) => {
   res.send(`
     <h2>Hello from backend</h2>
   `);
 });
 
-app.get('/routes', (req, res) => {
+app.get(proxyPath + '/routes', (req, res) => {
   client.connect(DB_URL, async function (err, client) {
     if (err) throw err
 
@@ -82,7 +82,7 @@ app.get('/routes', (req, res) => {
   })
 })
 
-app.post('/register', (req, res, next) => {
+app.post(proxyPath + '/register', (req, res, next) => {
   const UUID = uuidv4().split('-')[0]
   const form = formidable({ multiples: true });
 
@@ -124,7 +124,7 @@ app.post('/register', (req, res, next) => {
   });
 });
 
-app.get('/delete/:routeId?', function (req, res) {
+app.get(proxyPath + '/delete/:routeId?', function (req, res) {
   client.connect(DB_URL, (err, client) => {
     if (err) throw err
     if (req.query.adminToken !== process.env.ADMIN_TOKEN) res.json({ auth: "Unathorized" })
@@ -138,7 +138,6 @@ app.get('/delete/:routeId?', function (req, res) {
       );
   })
 })
-
 
 app.use(Sentry.Handlers.errorHandler());
 
