@@ -13,7 +13,6 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.1.7-alpha.4",
     "formidable": "^1.2.2",
-    "http-proxy-middleware": "^1.0.6",
     "mongodb": "^3.5.9",
     "sharp": "^0.27.2",
     "uuid": "^8.2.0"

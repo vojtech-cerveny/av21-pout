@@ -8,6 +8,8 @@ services:
       - ./.env.docker
     ports: 
       - 3200:3200
+    links:
+      - mongo
 
   mongo:
     image: mongo
