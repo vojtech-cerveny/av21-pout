@@ -15,7 +15,7 @@ export const Timeline = ({ routes }) => {
           } km`,
     }
   })
-  distance = 0
+  let distance2 = 0
   return (
     <>
       <h2 style={{ padding: '0 2rem' }}>Společně jsme ušli {distance} km z 1200 km!</h2>
@@ -27,7 +27,7 @@ export const Timeline = ({ routes }) => {
           theme={{ primary: '#2D4552', secondary: '#FF5D3A' }}
         >
           {routes.map((route) => {
-            distance += route.distance
+            distance2 += route.distance
             return (
               <div key={route.id}>
                 <h2
@@ -49,8 +49,8 @@ export const Timeline = ({ routes }) => {
                 </h3>
                 {isMobile && (
                   <p>
-                    Část poutě {route.distance === distance ? 0 : distance - route.distance}-
-                    {distance} km. Přidáno {route.distance} km
+                    Část poutě {route.distance === distance2 ? 0 : distance2 - route.distance}-
+                    {distance2} km. Přidáno {route.distance} km
                   </p>
                 )}
                 <img
