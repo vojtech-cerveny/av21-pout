@@ -6,6 +6,7 @@ const formidable = require('formidable');
 const sharp = require('sharp')
 const cors = require('cors')
 const fs = require('fs')
+const bodyParser = require('body-parser')
 const Sentry = require('@sentry/node');
 const Tracing = require("@sentry/tracing");
 
@@ -43,7 +44,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 app.use(cors())
 app.use(proxyPath,express.static('public'));
-
+app.use(bodyParser.json({limit: '10mb'}));
 // All controllers should live here
 app.get("/", function rootHandler(req, res) {
   res.end("Hello world!");
