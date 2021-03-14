@@ -10,6 +10,8 @@ services:
       - 3200:3200
     links:
       - mongo
+    volumes: 
+      - ./images/:/public/images  
 
   mongo:
     image: mongo

@@ -55,6 +55,8 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
       headers: {
         'content-type': 'multipart/form-data',
       },
+      maxContentLength: 100000000,
+      maxBodyLength: 1000000000
     }
     const bodyFormData = new FormData()
     bodyFormData.set('routeInfo', JSON.stringify(form))
