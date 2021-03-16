@@ -32,11 +32,16 @@ function AvMap({ routes }) {
   const [point, setPoint] = useState(
     routes.length === 0
       ? { lat: gpsCoordinates[0][0], lng: gpsCoordinates[0][1] }
+      : sumDistance >= 1040
+      ? {
+          lat: gpsCoordinates[gpsCoordinates.length - 1][0],
+          lng: gpsCoordinates[gpsCoordinates.length - 1][1],
+        }
       : { lat: gpsCoordinates[sumDistance][0], lng: gpsCoordinates[sumDistance][1] },
   )
   const [map, setMap] = React.useState(null)
   const mapRef = useRef(null)
-  console.log(point)
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -119,25 +124,33 @@ function AvMap({ routes }) {
         zoom={8}
         onLoad={onLoad}
         onUnmount={onUnmount}
-        onZoomChanged={(e) => console.log(e)}
       >
         {routes.map((route, index, arr) => {
           const startPosition = {
             lat: gpsCoordinates[currentDistance][0],
             lng: gpsCoordinates[currentDistance][1],
           }
-          const endPosition = {
-            lat: gpsCoordinates[currentDistance + route.distance][0],
-            lng: gpsCoordinates[currentDistance + route.distance][1],
+          let endPosition
+
+          if (index === arr.length - 1 && sumDistance >= 1040) {
+            endPosition = {
+              lat: gpsCoordinates[gpsCoordinates.length - 1][0],
+              lng: gpsCoordinates[gpsCoordinates.length - 1][1],
+            }
+          } else {
+            endPosition = {
+              lat: gpsCoordinates[currentDistance + route.distance][0],
+              lng: gpsCoordinates[currentDistance + route.distance][1],
+            }
           }
 
           currentDistance += route.distance
 
           return (
-            <>
+            <div key={index}>
               <Polyline
+                key={index + 'a'}
                 path={[startPosition, endPosition]}
-                onClick={() => alert('wohou')}
                 options={{
                   strokeColor: route.color || 'blue',
                   strokeOpacity: 0.8,
@@ -152,42 +165,48 @@ function AvMap({ routes }) {
                 }}
               />
               <Marker
+                key={index+ 'b'}
                 position={endPosition}
                 icon={'/marker.svg'}
                 onClick={() => showModal(route, endPosition)}
               />
-            </>
+            </div>
           )
         })}
         <Marker
-          position={{lat: gpsCoordinates[gpsCoordinates.length-1][0], lng: gpsCoordinates[gpsCoordinates.length-1][1]}}
+          position={{
+            lat: gpsCoordinates[gpsCoordinates.length - 1][0],
+            lng: gpsCoordinates[gpsCoordinates.length - 1][1],
+          }}
           icon={'/marker-velehrad.png'}
         />
-        <Polyline
-          path={[
-            {
-              lat: gpsCoordinates[currentDistance][0],
-              lng: gpsCoordinates[currentDistance][1],
-            },
-            {
-              lat: gpsCoordinates[gpsCoordinates.length - 1][0],
-              lng: gpsCoordinates[gpsCoordinates.length - 1][1],
-            },
-          ]}
-          options={{
-            strokeColor: 'grey',
-            strokeOpacity: 0.3,
-            strokeWeight: 5,
-            fillOpacity: 0.3,
-            clickable: false,
-            draggable: false,
-            editable: false,
-            visible: true,
-            radius: 30000,
-            zIndex: 1,
-            fillColor: 'grey',
-          }}
-        />
+        {sumDistance < 1040 && (
+          <Polyline
+            path={[
+              {
+                lat: gpsCoordinates[currentDistance][0],
+                lng: gpsCoordinates[currentDistance][1],
+              },
+              {
+                lat: gpsCoordinates[gpsCoordinates.length - 1][0],
+                lng: gpsCoordinates[gpsCoordinates.length - 1][1],
+              },
+            ]}
+            options={{
+              strokeColor: 'grey',
+              strokeOpacity: 0.3,
+              strokeWeight: 5,
+              fillOpacity: 0.3,
+              clickable: false,
+              draggable: false,
+              editable: false,
+              visible: true,
+              radius: 30000,
+              zIndex: 1,
+              fillColor: 'grey',
+            }}
+          />
+        )}
       </GoogleMap>
     </>
   ) : (

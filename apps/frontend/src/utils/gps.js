@@ -41,7 +41,7 @@ export function moveAlongPath(points, distance, index) {
 }
 
 export const moveTowards = function (pointStart, pointEnd, distance) {
-  console.log(pointStart.lat)
+
   var lat1 = pointStart.lat.toRad()
   var lon1 = pointStart.lng.toRad()
   var lat2 = pointEnd.lat.toRad()
@@ -69,7 +69,6 @@ export const moveTowards = function (pointStart, pointEnd, distance) {
     )
 
   if (isNaN(lat2) || isNaN(lon2)) return null
-  console.log(lat2.toDeg(), lon2.toDeg())
   return [lat2.toDeg(), lon2.toDeg()]
 }
 

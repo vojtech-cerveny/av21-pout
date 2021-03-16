@@ -5,20 +5,32 @@ export const Timeline = ({ routes }) => {
   const [width, setWidth] = useState(window.innerWidth)
   const isMobile = width < 768
   let distance = 0
-  const routeItems = routes.map((route) => {
+  let sumDistance = 0
+  routes.forEach((route) => (sumDistance += route.distance))
+  const isDone = sumDistance >= 1040
+
+  const routeItems = routes.map((route, index, arr) => {
     distance += route.distance
     return {
       title: isMobile
         ? ``
-        : `Část ${route.distance === distance ? 0 : distance - route.distance} - ${distance} km. Přidáno ${
-            route.distance
-          } km`,
+        : `Část ${route.distance === distance ? 0 : distance - route.distance} - ${
+            isDone && index === arr.length - 1 ? 1040 : distance
+          } km. Přidáno ${route.distance} km`,
     }
   })
+
   let distance2 = 0
   return (
     <>
-      <h2 style={{ padding: '0 2rem' }}>Společně jsme ušli {distance} km z 1040 km!</h2>
+      {isDone ? (
+        <h2 style={{ padding: '0 2rem' }}>
+          Společně došli do cíle! Ušli jsme společně 1040 km! Děkujeme všem za účast!
+        </h2>
+      ) : (
+        <h2 style={{ padding: '0 2rem' }}>Společně jsme ušli {distance} km z 1040 km!</h2>
+      )}
+
       <div style={{ width: '100%', overflowY: 'auto' }}>
         <Chrono
           items={routeItems}

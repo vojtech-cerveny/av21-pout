@@ -18,6 +18,7 @@ Můžeš prosím zkontrolovat, že je všechno v pořádku a pokud ne, tak pří
 • *distance*: ${route.distance} \n
 • *startPoint*: ${route.startPoint} \n
 • *endPoint*: ${route.endPoint} \n
+• *note*: ${route.note} \n
 • *id*: ${route.id} \n
             `
   let imageUrl = process.env.ENV === 'localhost' ? 'https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg&w=400&fit=max' : `${process.env.SERVER_URL}/images/${route.imagePath}`

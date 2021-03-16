@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Button } from 'antd'
+import { Button, Tooltip } from 'antd'
 import {
   CaretLeftOutlined,
   CaretRightOutlined,
@@ -52,6 +52,8 @@ const buttonStyle = {
 }
 
 export const SidePanel = ({ routes, setRefresh }) => {
+  let distance = 0
+
   const [width, setWidth] = useState(window.innerWidth)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -62,61 +64,72 @@ export const SidePanel = ({ routes, setRefresh }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const handleOk = () => setIsModalVisible(false)
   const handleCancel = () => setIsModalVisible(false)
-  const showAddRouteModal = () => setIsModalVisible("addRoute")
-  const showInfo = () => setIsModalVisible("info")
+  const showAddRouteModal = () => setIsModalVisible('addRoute')
+  const showInfo = () => setIsModalVisible('info')
+
   return (
     <>
-      <Button
-        top={62}
-        type="primary"
-        size="large"
-        shape="circle"
-        style={{
-          ...buttonStyle,
-          top: '62px',
-          right: isOpen ? (width >= 768 ? '51%' : '90%') : '90px',
-        }}
-        onClick={() => toggleVisibility()}
+      <Tooltip placement="left" title="Timeline pouti">
+        <Button
+          top={62}
+          type="primary"
+          size="large"
+          shape="circle"
+          style={{
+            ...buttonStyle,
+            top: '62px',
+            right: isOpen ? (width >= 768 ? '51%' : '90%') : '90px',
+          }}
+          onClick={() => toggleVisibility()}
+        >
+          {' '}
+          {isOpen ? <CaretRightOutlined /> : <CaretLeftOutlined />}{' '}
+        </Button>
+      </Tooltip>
+      <Tooltip
+        placement="left"
+        title={() => (distance >= 1040 ? 'Pouť jsme již došli!' : 'Přidat novou pouť')}
       >
-        {' '}
-        {isOpen ? <CaretRightOutlined /> : <CaretLeftOutlined />}{' '}
-      </Button>
-      <Button
-        top={112}
-        type="primary"
-        size="large"
-        shape="circle"
-        style={{
-          ...buttonStyle,
-          top: '112px',
-          right: isOpen ? (width >= 768 ? '51%' : '90%') : '90px',
-        }}
-        icon={<PlusOutlined />}
-        onClick={() => showAddRouteModal()}
-      />
-      <Button
-        top={162}
-        type="primary"
-        size="large"
-        shape="circle"
-        style={{
-          ...buttonStyle,
-          top: '162px',
-          right: isOpen ? (width >= 768 ? '51%' : '90%') : '90px',
-          backgroundColor: '#1FAAAA',
-          borderColor: '#1FAAAA',
-        }}
-        icon={<InfoOutlined />}
-        onClick={() => showInfo()}
-      />
+        <Button
+          top={112}
+          type="primary"
+          size="large"
+          shape="circle"
+          style={{
+            ...buttonStyle,
+            top: '112px',
+            right: isOpen ? (width >= 768 ? '51%' : '90%') : '90px',
+          }}
+          icon={<PlusOutlined />}
+          disabled={distance >= 1040 ? true : false}
+          onClick={() => showAddRouteModal()}
+        />
+      </Tooltip>
+      <Tooltip placement="left" title="Informace">
+        <Button
+          top={162}
+          type="primary"
+          size="large"
+          shape="circle"
+          style={{
+            ...buttonStyle,
+            top: '162px',
+            right: isOpen ? (width >= 768 ? '51%' : '90%') : '90px',
+            backgroundColor: '#1FAAAA',
+            borderColor: '#1FAAAA',
+          }}
+          icon={<InfoOutlined />}
+          onClick={() => showInfo()}
+        />
+      </Tooltip>
 
       <PanelWrap style={panelWrapStyle} open={isOpen} isDesktop={width >= 768}>
         <Header isRotated={!isOpen}>
           {' '}
           <img src="/logo.svg" alt="logo" width="40px" style={{ paddingRight: '10px' }} />
-          <h2 className="av21" style={{ margin: 0, fontSize: 'xxx-large', paddingRight: '20px' }}>
+          <div className="av21" style={{ margin: 0, fontSize: 'xxx-large', paddingRight: '20px' }}>
             AV21
-          </h2>
+          </div>
           Pouť Soluň ➡ Velehrad
         </Header>
 
