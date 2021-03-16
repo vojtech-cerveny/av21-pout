@@ -11,7 +11,7 @@ services:
     links:
       - mongo
     volumes: 
-      - ./images/:/public/images  
+      - ./images/:./public/images  
 
   mongo:
     image: mongo

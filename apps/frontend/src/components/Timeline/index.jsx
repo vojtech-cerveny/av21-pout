@@ -18,7 +18,7 @@ export const Timeline = ({ routes }) => {
   let distance2 = 0
   return (
     <>
-      <h2 style={{ padding: '0 2rem' }}>Společně jsme ušli {distance} km z 1200 km!</h2>
+      <h2 style={{ padding: '0 2rem' }}>Společně jsme ušli {distance} km z 1040 km!</h2>
       <div style={{ width: '100%', overflowY: 'auto' }}>
         <Chrono
           items={routeItems}

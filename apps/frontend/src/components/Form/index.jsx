@@ -56,7 +56,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
         'content-type': 'multipart/form-data',
       },
       maxContentLength: 100000000,
-      maxBodyLength: 1000000000
+      maxBodyLength: 1000000000,
     }
     const bodyFormData = new FormData()
     bodyFormData.set('routeInfo', JSON.stringify(form))
@@ -182,7 +182,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
                   src={URL.createObjectURL(form.picture)}
                   alt="Tvoje fotečka"
                   width="100%"
-                  style={{ margin: '10px'}}
+                  style={{ margin: '10px' }}
                 />
               </div>
             ) : (
@@ -233,18 +233,18 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
         >
           <Box>
             <p>
-              Vydej se s námi na pouť. Vycházíme ze Soluně a cílem je Velehrad. Místo, kde se dá-li
-              Pán potkáme i letos v srpnu na AV21. Čeká nás krásných 1200 km. Pro jednoho nemožné.
-              Když spojíme síly, cíle dosáhneme.
+              Vydej se s námi na pouť. Vycházíme ze Soluně a cílem je Velehrad. Místo, kde se, dá-li
+              Pán, potkáme i letos v srpnu na AV21. Čeká nás krásných 1040 km. Pro jednoho nemožné.
+              Když spojíme síly, cíle dosáhneme. Jak to bude probíhat? Každý se sám ve svém okolí
+              vypraví na pouť nebo i několik poutí.
+              <b>Cílem může být poutní místo, kříž, boží muka.</b>
             </p>
             <p>
-              Jak to bude probíhat? Každý se sám ve svém okolí, vypraví na pouť, nebo i několik
-              poutí. Cílem může být <b>poutní místo, kříž, boží muka</b>. Pokud v Tvém okolí nic podobného
-              není, nevadí. Důležité je vyjít. Tam kam dojdeš, pak postav alespoň malý křížek.
-              Nakonec vyfoť fotku sebe a svého cíle putování. Fotku společně s počtem ušlých
-              kilometrů nahraj do poutní aplikace. Tvé kilometry se připočtou k naší společné cestě
-              a posunou nás blíže k Velehradu. Ke svým úmyslům můžeš mimo jiné připojit i modlitbu
-              za zdárný průběh AV21.
+              Pokud ve Tvém okolí nic podobného není, nevadí. Důležité je vyjít. Tam, kam dojdeš,
+              pak postav alespoň malý křížek. Nakonec vyfoť fotku sebe a svého cíle putování. Fotku
+              společně s počtem ušlých kilometrů nahraj do poutní aplikace. Tvé kilometry se
+              připočtou k naší společné cestě a posunou nás blíže k Velehradu. Ke svým úmyslům můžeš
+              mimo jiné připojit i modlitbu za zdárný průběh AV21.
             </p>
           </Box>
         </Modal>
