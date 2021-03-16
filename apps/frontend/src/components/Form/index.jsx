@@ -237,7 +237,7 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
               Pán, potkáme i letos v srpnu na AV21. Čeká nás krásných 1040 km. Pro jednoho nemožné.
               Když spojíme síly, cíle dosáhneme. Jak to bude probíhat? Každý se sám ve svém okolí
               vypraví na pouť nebo i několik poutí.
-              <b>Cílem může být poutní místo, kříž, boží muka.</b>
+              <b> Cílem může být poutní místo, kříž, boží muka.</b>
             </p>
             <p>
               Pokud ve Tvém okolí nic podobného není, nevadí. Důležité je vyjít. Tam, kam dojdeš,
