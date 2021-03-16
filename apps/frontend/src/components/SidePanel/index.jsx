@@ -53,7 +53,7 @@ const buttonStyle = {
 
 export const SidePanel = ({ routes, setRefresh }) => {
   let distance = 0
-
+  routes.forEach(route => distance += route.distance)
   const [width, setWidth] = useState(window.innerWidth)
   const [isOpen, setIsOpen] = useState(false)
 

@@ -131,7 +131,6 @@ function AvMap({ routes }) {
             lng: gpsCoordinates[currentDistance][1],
           }
           let endPosition
-
           if (index === arr.length - 1 && sumDistance >= 1040) {
             endPosition = {
               lat: gpsCoordinates[gpsCoordinates.length - 1][0],
