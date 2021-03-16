@@ -246,6 +246,12 @@ export const Form = ({ visible, onOk, onCancel, setRefresh }) => {
               připočtou k naší společné cestě a posunou nás blíže k Velehradu. Ke svým úmyslům můžeš
               mimo jiné připojit i modlitbu za zdárný průběh AV21.
             </p>
+            <p>
+              V případě dotazů a hlášení problémů použij prosím náš email{' '}
+              <a href="mailto:info@absolventskyvelehrad.cz">info@absolventskyvelehrad.cz</a>
+            </p>
+            <br />
+            <p style={{ textAlign: 'center', fontSize: 'small' }}> Vytvořeno s ❤️ | Vojta Č. 🦊 </p>
           </Box>
         </Modal>
       )}

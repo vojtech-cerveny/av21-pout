@@ -78,7 +78,7 @@ app.post(proxyPath + '/register', (req, res, next) => {
       return;
     }
     const newRoute = JSON.parse(fields.routeInfo)
-    newRoute.distance = Number.parseInt(newRoute.distance)
+    newRoute.distance = Math.abs(Number.parseInt(newRoute.distance))
     newRoute.id = uuidv4().split('-')[0]
     newRoute.color = random_rgba()
     newRoute.imagePathSmall = `${UUID}-small.${files.image.type.split('/')[1]}`
