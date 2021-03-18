@@ -2,10 +2,14 @@ import './App.css'
 import React, { useState, useEffect } from 'react'
 import GoogleMap from './components/GoogleMap'
 import RouteContext from './RouteContext'
+import ReactGA from 'react-ga'
 
 import gpsCoordinates from './data/points.json'
 import { SidePanel } from './components/SidePanel'
 function App() {
+  ReactGA.initialize('UA-129078885-4')
+  ReactGA.pageview(window.location.pathname + window.location.search)
+
   const [context, setContext] = useState({
     lat: gpsCoordinates[0][0],
     lng: gpsCoordinates[0][1],
